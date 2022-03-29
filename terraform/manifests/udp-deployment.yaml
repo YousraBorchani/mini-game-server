@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: udp-deployment
+  namespace: default
+  labels:
+    app: udp-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: udp-server
+  template:
+    metadata:
+      labels:
+        app: udp-server
+    spec:
+      containers:
+      - image: yosra94/udp_server:1.2
+        name: udp-server
+        imagePullPolicy: Always
+        env:
+        - name: SERVER_TTL
+          value: "600"
+        resources:
+          requests:
+            memory: 200Mi
+            cpu: 150m
+          limits:
+            memory: 400Mi
+            cpu: 300m
+        ports:
+        - containerPort: 7778
+          protocol: UDP
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - cat /var/run/server-udp.status
+          initialDelaySeconds: 5
+          periodSeconds: 2
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - cat /var/run/server-udp.status
+          initialDelaySeconds: 5
+          periodSeconds: 2
+        startupProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - cat /var/run/server-udp.status
+          failureThreshold: 30
+          periodSeconds: 2

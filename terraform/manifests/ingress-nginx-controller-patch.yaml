@@ -1,0 +1,9 @@
+spec:
+  template:
+    spec:
+      containers:
+      - name: controller
+        ports:
+         - containerPort: 7778
+           hostPort: 7778
+           protocol: UDP
